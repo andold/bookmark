@@ -1,0 +1,130 @@
+buildscript {
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath("io.spring.gradle:dependency-management-plugin:1.1.4")
+		classpath("com.github.node-gradle:gradle-node-plugin:7.0.2")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:3.2.2")
+	}
+}
+
+plugins {
+	id "java"
+	id "war"
+}
+
+ext {
+	lombokVersion = "1.18.24"
+}
+
+apply plugin: "org.springframework.boot"
+apply plugin: "com.github.node-gradle.node"
+apply plugin: "io.spring.dependency-management"
+
+war.enabled = true
+
+group = "kr.andold.bookmark"
+version = "0.0.1-SNAPSHOT"
+
+//	compatible gradle 7.5
+sourceCompatibility = 18
+targetCompatibility = 18
+
+repositories {
+	mavenCentral()
+	maven {
+		url = uri("https://maven.pkg.github.com/andold/utils")
+		credentials {
+			username = mavenUser
+			password = mavenPassword
+		}
+	}
+}
+
+dependencies {
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	implementation("org.postgresql:postgresql:42.7.4")
+
+	implementation("kr.andold:utils:0.0.4")
+
+	implementation("org.jsoup:jsoup:1.15.3")
+	implementation("org.hibernate:hibernate-jpamodelgen:6.1.7.Final")
+	implementation("org.springframework.boot:spring-boot:3.2.5")
+	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-websocket")
+	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+ 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+ 
+	implementation("javax.validation:validation-api:2.0.1.Final")
+	implementation("javax.xml.bind:jaxb-api:2.2.11")
+
+	compileOnly("org.projectlombok:lombok:${lombokVersion}")
+	annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+	testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+	testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+
+	testImplementation('org.junit.jupiter:junit-jupiter-api:5.7.0')
+	testImplementation('org.junit.jupiter:junit-jupiter-engine:5.7.0')
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+def webappDir = "$projectDir/src/main/frontend"
+
+println "projectDir: $projectDir"
+println "webappDir: $webappDir"
+
+if (project.hasProperty("profile")) {
+	println "profile: ${profile}"
+	sourceSets {
+		main {
+			resources {
+				srcDirs = ["src/main/resources", "src/main/resources-${profile}"]
+			}
+		}
+	}
+} else {
+	println "profile: null. maybe test environment."
+	sourceSets {
+		main {
+			resources {
+				srcDirs = ["src/main/resources", "src/test/resources", "src/test/resources-local"]
+			}
+		}
+	}
+}
+
+processResources {
+    dependsOn "copyWebApp"
+}
+task copyWebApp(type: Copy) {
+	println "copyWebApp: from($webappDir/build) into($projectDir/src/main/resources/static)."
+	dependsOn "buildAdmin"
+	from "$webappDir/build"
+	into "$projectDir/src/main/resources/static"
+}
+
+node {
+	version = "19.1.0"
+	npmVersion = "9.1.2"
+	download = true
+	nodeProjectDir = file("$webappDir")
+}
+
+task buildAdmin(type: NpmTask) {
+	inputs.dir("$webappDir/src")
+    args = ["run", "build"]
+}
+
+rootProject.tasks.named("processResources") {
+	duplicatesStrategy = "include"
+}
