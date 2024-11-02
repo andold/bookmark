@@ -7,7 +7,7 @@ HOME_DIR=/home/andold
 SOURCE_DIR=$HOME_DIR/src/github/bookmark
 DEPLOY_DIR=$HOME_DIR/deploy/bookmark
 TOMCAT_BIN_DIR=$HOME_DIR/apps/tomcat/bin
-FILE_NAME_WAR=$SOURCE_DIR/build/libs/contact-0.0.1-SNAPSHOT.war
+FILE_NAME_WAR=$SOURCE_DIR/build/libs/bookmark-0.0.1-SNAPSHOT.war
 #
 #
 #
