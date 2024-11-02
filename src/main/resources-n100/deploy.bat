@@ -22,7 +22,7 @@ ECHO %PROFILE% %INSTALL_SCRIPT_FILE_NAME% %DEPLOY_SCRIPT_FILE_NAME% %SOURCE_DIR%
 @REM
 CD %SOURCE_DIR%
 git clean -f
-CALL gradle clean -Pprofile=%PROFILE% -x test
+@REM CALL gradlew.bat clean -Pprofile=%PROFILE% -x test
 @REM
 @REM
 @REM react npm install
