@@ -8,14 +8,14 @@ class BookmarkRepository {
 	}
 
 	async search(request: any, onSuccess?: any, onError?: any, element?: any) {
-		return axios.post("/api/search", request)
+		return axios.post("./api/search", request)
 			.then(response => onSuccess && onSuccess(request, response.data, element))
 			.catch(error => onError && onError(request, error, element));
 	}
 	async major(request: any, onSuccess?: any, onError?: any, element?: any) {
-		return axios.post("/api/search", { pid: 0, expand: true })
+		return axios.post("./api/search", { pid: 0, expand: true })
 			.then(response => {
-				axios.post("/api/search", { pid: response.data[0].pid, expand: true })
+				axios.post("./api/search", { pid: response.data[0].pid, expand: true })
 					.then(response => {
 						onSuccess && onSuccess(request, response.data[0].children.sort((a: any, b: any) => b.count - a.count), element);
 					})
