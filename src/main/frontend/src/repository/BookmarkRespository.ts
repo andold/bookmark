@@ -1,24 +1,21 @@
 import axios from "axios";
 
 class BookmarkRepository {
-	constructor() {
-	}
-
 	async sample(request: any, onSuccess?: any, onError?: any, element?: any) {
-		return axios.get("./api/bookmark/sample", request)
+		return axios.get("./api/sample", request)
 			.then(response => onSuccess && onSuccess(request, response.data, element))
 			.catch(error => onError && onError(request, error, element));
 	}
 
 	async search(request: any, onSuccess?: any, onError?: any, element?: any) {
-		return axios.post("./api/bookmark/search", request)
+		return axios.post("/api/search", request)
 			.then(response => onSuccess && onSuccess(request, response.data, element))
 			.catch(error => onError && onError(request, error, element));
 	}
 	async major(request: any, onSuccess?: any, onError?: any, element?: any) {
-		return axios.post("./api/bookmark/search", { pid: 0, expand: true })
+		return axios.post("/api/search", { pid: 0, expand: true })
 			.then(response => {
-				axios.post("./api/bookmark/search", { pid: response.data[0].pid, expand: true })
+				axios.post("/api/search", { pid: response.data[0].pid, expand: true })
 					.then(response => {
 						onSuccess && onSuccess(request, response.data[0].children.sort((a: any, b: any) => b.count - a.count), element);
 					})
@@ -27,7 +24,7 @@ class BookmarkRepository {
 			.catch(error => onError(request, error, element));
 	}
 	async batch(request: any, onSuccess?: any, onError?: any, element?: any) {
-		return axios.post("./api/bookmark/batch", request)
+		return axios.post("./api/batch", request)
 			.then(response => onSuccess && onSuccess(request, response.data.content, element))
 			.catch(error => onError && onError(request, error, element));
 	}
@@ -39,13 +36,12 @@ class BookmarkRepository {
 	async update(request: any, onSuccess?: any, onError?: any, element?: any) {
 		const updating = { ...request };
 		updating.children = null;
-		return axios.put("./api/bookmark/" + request.id, updating)
+		return axios.put("./api/" + request.id, updating)
 			.then(response => onSuccess && onSuccess(request, response.data, element))
 			.catch(error => onError && onError(request, error, element));
 	}
 	async increaseCount(request: any, onSuccess?: any, onError?: any, element?: any) {
-		const { children, ...updating } = request;
-		return axios.put(`./api/bookmark/${request.id}/count`)
+		return axios.put(`./api/${request.id}/count`)
 			.then(response => {
 				onSuccess && onSuccess(request, response.data, element);
 			})
@@ -54,13 +50,13 @@ class BookmarkRepository {
 			});
 	}
 	async remove(request: any, onSuccess?: any, onError?: any, element?: any) {
-		return axios.delete("./api/bookmark/" + request.id)
+		return axios.delete("./api/" + request.id)
 			.then(response => onSuccess && onSuccess(request, response.data, element))
 			.catch(error => onError && onError(request, error, element));
 	}
 	async download(request: any, onSuccess?: any, onError?: any, element?: any) {
 		return axios({
-			url: "./api/bookmark/download",
+			url: "./api/download",
 			method: "GET",
 			responseType: "blob",
 		}).then(response => {
@@ -76,22 +72,22 @@ class BookmarkRepository {
 		.catch(error => onError && onError(request, error, element));
 	}
 	async upload(request: any, onSuccess?: any, onError?: any, element?: any) {
-		return axios.post("./api/bookmark/upload", request)
+		return axios.post("./api/upload", request)
 			.then(response => onSuccess && onSuccess(request, response.data, element))
 			.catch(error => onError && onError(request, error, element));
 	}
 	async aggreagateCount(request: any, onSuccess?: any, onError?: any, element?: any) {
-		return axios.get("./api/bookmark/control/aggregate-count", request)
+		return axios.get("./api/control/aggregate-count", request)
 			.then(response => onSuccess && onSuccess(request, response.data, element))
 			.catch(error => onError && onError(request, error, element));
 	}
 	async countHalf(request: any, onSuccess?: any, onError?: any, element?: any) {
-		return axios.get("./api/bookmark/control/decrease-count-half")
+		return axios.get("./api/control/decrease-count-half")
 			.then(response => onSuccess && onSuccess(request, response.data, element))
 			.catch(error => onError && onError(request, error, element));
 	}
 	async deduplicate(onSuccess?: any, onError?: any, element?: any) {
-		return axios.post("./api/bookmark/control/deduplicate")
+		return axios.post("./api/control/deduplicate")
 			.then(response => onSuccess && onSuccess(response.data, element))
 			.catch(error => onError && onError(error, element));
 	}

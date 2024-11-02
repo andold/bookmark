@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("api/bookmark")
+@RequestMapping("api")
 public class ApiBookmarkController {
 	@Autowired private BookmarkService service;
 
@@ -139,7 +139,7 @@ public class ApiBookmarkController {
 	}
 
 	@PostMapping(value = {"upload"})
-	public BookmarkDifferResult upload(@RequestPart MultipartFile file) {
+	public BookmarkDifferResult upload(@RequestPart(value = "file") MultipartFile file) {
 		log.info("{} upload({})", Utility.indentStart(), "MultipartFile file");
 		long started = System.currentTimeMillis();
 

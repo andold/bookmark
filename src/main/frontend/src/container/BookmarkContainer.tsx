@@ -19,8 +19,6 @@ import { ColDef } from "ag-grid-community";
 
 // BookmarkContainer.tsx
 export default ((props: any) => {
-	const { } = props;
-
 	const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
 	const modeComponent = [
 		<BookmarkViewCard
