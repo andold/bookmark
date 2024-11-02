@@ -36,7 +36,7 @@ CALL npm install react-scripts@latest --save
 @REM build
 @REM
 CD %SOURCE_DIR%
-CALL gradle build -Pprofile=%PROFILE% -x test
+CALL gradlew.bat build -Pprofile=%PROFILE% -x test
 @REM
 @REM
 @REM stop tomcat
