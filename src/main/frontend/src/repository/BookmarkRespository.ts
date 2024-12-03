@@ -93,5 +93,5 @@ class BookmarkRepository {
 	}
 
 }
-
-export default new BookmarkRepository();
+const repository = new BookmarkRepository();
+export default repository;

@@ -16,7 +16,7 @@ export function BookmarkViewAgGridTree(props: any) {
 	const [mapBookmark, setMapBookmark] = useState<Map<number, Bookmark>>(new Map());
 	const [rowData, setRowData] = useState<any[]>([]);
 	const gridRef = useRef<AgGridReact>(null);
-	const columndefs: any = useMemo<AgGridReactProps[]>(() => calculateColumnDefs(mapBookmark, onRemove, onCopy), [mapBookmark]);
+	const columndefs: any = useMemo<AgGridReactProps[]>(() => calculateColumnDefs(mapBookmark, onRemove, onCopy), [mapBookmark, onRemove, onCopy]);
 
 	function handleOnCellValueChanged(params: any) {
 		if (!params.value) {

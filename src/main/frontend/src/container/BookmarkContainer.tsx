@@ -18,7 +18,7 @@ import DragAndDropFile from "../view/DragAndDropFile";
 import { ColDef } from "ag-grid-community";
 
 // BookmarkContainer.tsx
-export default ((props: any) => {
+function BookmarkContainer(props: any) {
 	const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
 	const modeComponent = [
 		<BookmarkViewCard
@@ -46,7 +46,7 @@ export default ((props: any) => {
 	}, [form]);
 
 	return (<>
-		{form.viewMode % modeComponent.length != 0 && (
+		{form.viewMode % modeComponent.length !== 0 && (
 			<SearchSection
 				form={form}
 				onChange={(params: any) => setForm(params)}
@@ -58,7 +58,8 @@ export default ((props: any) => {
 			onChange={(params: any) => setForm(params)}
 		/>
 	</>);
-});
+}
+export default BookmarkContainer;
 
 function BookmarkViewAgGrid(props: any) {
 	const { bookmarks, onUpdate } = props;

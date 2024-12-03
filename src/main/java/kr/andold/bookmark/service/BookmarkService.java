@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
@@ -420,7 +421,7 @@ public class BookmarkService {
 	}
 
 	public Bookmark updateCountIncrease(Integer id) {
-		log.info("{} updateCountIncrease(#{})", Utility.indentStart(), id);
+		log.info("{} updateCountIncrease({})", Utility.indentStart(), id);
 		long started = System.currentTimeMillis();
 
 		Bookmark base = read(id);
@@ -428,42 +429,41 @@ public class BookmarkService {
 			return null;
 		}
 
-		String url = base.getUrl();
-		if (url == null || url.trim().isEmpty()) {
+		if (!StringUtils.hasText(base.getUrl())) {
 			if (base.getCount() == null) {
 				base.setCount(1);
 			} else {
 				base.setCount(base.getCount().intValue() + 1);
 			}
 
-			update(base);
+			Bookmark updated = update(base);
 
-			log.info("{} {} updateCountIncrease(#{}) - {}", Utility.indentEnd(), base, id, Utility.toStringPastTimeReadable(started));
-			return base;
+			log.info("{} 『{}』 updateCountIncrease({}) - {}", Utility.indentEnd(), updated, id, Utility.toStringPastTimeReadable(started));
+			return updated;
 		}
 
-		List<Bookmark> list = repository.findByIdOrUrl(id, url.trim());
-		if (list == null) {
-			log.error("{} SEARCH_ERROR:{} updateCountIncrease(#{}) - {}", Utility.indentEnd(), base, id, Utility.toStringPastTimeReadable(started));
-			return base;
-		}
-
-		for (int cx = 0, sizex = list.size(); cx < sizex; cx++) {
-			Bookmark bookmark = list.get(cx);
-			if (bookmark == null) {
+		String url = base.getUrl().strip();
+		List<Bookmark> bookmarks = search(null);
+		List<Bookmark> container = new ArrayList<>();
+		for (Bookmark bookmark: bookmarks) {
+			if (bookmark == null || !StringUtils.hasText(bookmark.getUrl())) {
 				continue;
 			}
+			
+			String urlThis = bookmark.getUrl().strip();
+			if (url.contains(urlThis)) {
+				if (bookmark.getCount() == null) {
+					bookmark.setCount(1);
+				} else {
+					bookmark.setCount(bookmark.getCount().intValue() + 1);
+				}
 
-			if (bookmark.getCount() == null) {
-				bookmark.setCount(1);
-			} else {
-				bookmark.setCount(bookmark.getCount().intValue() + 1);
+				Bookmark updated = update(bookmark);
+				container.add(updated);
 			}
-
-			update(bookmark);
 		}
 
-		log.info("{} {} updateCountIncrease(#{}) - {}", Utility.indentEnd(), base, id, Utility.toStringPastTimeReadable(started));
+		log.info("{} 『#{}』 updateCountIncrease({}) - {}", Utility.indentEnd(), Utility.size(container), id, Utility.toStringPastTimeReadable(started));
 		return base;
 	}
 
@@ -568,15 +568,12 @@ public class BookmarkService {
 
 	public List<Bookmark> search(BookmarkParameter parameter) {
 		log.info("{} search({})", Utility.indentStart(), parameter);
-		if (parameter == null) {
-			log.info("{} #{} - search({}) - {}", Utility.indentEnd(), -1, parameter);
-			return list();
-		}
+		long started = System.currentTimeMillis();
 
-		List<Bookmark> list = repository.search(parameter);
+		List<Bookmark> bookmarks = (parameter == null) ? list() : repository.search(parameter);
 
-		log.info("{} #{} - search({}) - {}", Utility.indentEnd(), Utility.size(list), parameter);
-		return list;
+		log.info("{} #{} - search({}) - {}", Utility.indentEnd(), Utility.size(bookmarks), parameter, Utility.toStringPastTimeReadable(started));
+		return bookmarks;
 	}
 
 	public Integer aggreagateCount() {

@@ -1,12 +1,11 @@
 <!DOCTYPE configuration>
-<configuration debug="true" scan="true" scanPeriod="30 seconds">
-	<property name="LOG_PATH" value="C:/logs/test-bookmark" />
+<configuration debug="false" scan="true" scanPeriod="30 seconds">
+	<property name="LOG_PATH" value="/home/andold/logs/test-bookmark" />
 	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<charset>UTF-8</charset>
-			<Pattern>TH %d{HH:mm:ss} [%-5level] %-32.32logger{32} :%4line %msg%n</Pattern>
+			<Pattern>%d{HH:mm:ss} [%-5level] %-32.32logger{32} :%4line %msg%n</Pattern>
 		</encoder>
 	</appender>
 	<appender name="general" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -19,7 +18,6 @@
 			<maxFileSize>4MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<charset>UTF-8</charset>
 			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-64.64logger{64} :%4line %msg%n</Pattern>
 		</encoder>
 	</appender>
@@ -33,26 +31,17 @@
 			<maxFileSize>4MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<charset>UTF-8</charset>
-			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-32.32logger{32} :%4line %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-64.64logger{64} :%4line %msg%n</Pattern>
 		</encoder>
 	</appender>
 
-	<logger name="org.hibernate" additivity="false" level="warn">
-		<appender-ref ref="console" />
-		<appender-ref ref="bookmark" />
-	</logger>
-	<logger name="kr.andold.household" additivity="false" level="debug">
+	<logger name="kr.andold.bookmark" additivity="false" level="debug">
 		<appender-ref ref="console" />
 		<appender-ref ref="bookmark" />
 	</logger>
 
-	<logger name="org.springframework" additivity="false" level="warn">
-		<appender-ref ref="console" />
-		<appender-ref ref="general" />
-	</logger>
-
-	<root level="info">
+	<root>
+		<level value="warn" />
 		<appender-ref ref="console" />
 		<appender-ref ref="general" />
 	</root>

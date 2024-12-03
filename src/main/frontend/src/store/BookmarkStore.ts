@@ -87,7 +87,7 @@ class BookmarkStore {
 	//	utils
 	root(bookmarks: Bookmark[]): Bookmark | null {
 		for (let bookmark of bookmarks) {
-			if (bookmark.id == 0 || bookmark.pid == 0 || bookmark.id == bookmark.pid) {
+			if (bookmark.id === 0 || bookmark.pid === 0 || bookmark.id === bookmark.pid) {
 				return bookmark;
 			}
 		}
@@ -115,11 +115,11 @@ class BookmarkStore {
 			if (!bookmark) {
 				return;
 			}
-			if (bookmark == root) {
+			if (bookmark === root) {
 				return;
 			}
 
-			const parent = map.get(bookmark!.pid);
+			const parent = map.get(bookmark.pid);
 			if (!parent) {
 				//console.log("dangling node", bookmark);
 				bookmark!.parent = root;
@@ -196,7 +196,7 @@ class BookmarkStore {
 			return false;
 		}
 
-		if (bookmark.id == 0 || bookmark == bookmark.parent) {
+		if (bookmark.id === 0 || bookmark === bookmark.parent) {
 			return false;
 		}
 		if (bookmark.collapsed) {

@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useEffect, useState, useImperativeHandle, forwardRef } from "react";
+import React, { useRef, useMemo, useEffect, useState, forwardRef } from "react";
 import { AgGridReact, AgGridReactProps } from "ag-grid-react";
 
 // model, domain
@@ -10,18 +10,10 @@ import store from "../store/BookmarkStore";
 
 // BookmarkSelectAgGridTree.tsx
 export default forwardRef((props: any, ref: any) => {
-	const { mapBookmark, value } = props;
+	const { mapBookmark, } = props;
 	const [rowData, setRowData] = useState<any[]>([]);
-	const [selected, setSelected] = useState<any>();
 	const gridRef = useRef<AgGridReact>(null);
 	const columndefs: any = useMemo<AgGridReactProps[]>(() => store.columnDefs(mapBookmark, ["sid", "url", "description", "pid", "count", "created", "updated"]), [props]);
-	useImperativeHandle(ref, () => {
-		return {
-			getValue() {
-				return selected.id;
-			},
-		};
-	});
 	function handleOnRowSelected(params: any) {
 		store.update({id: props.data.id, pid: params.data.id}
 			, (a: any, b: any) => {
