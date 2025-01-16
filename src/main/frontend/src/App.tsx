@@ -11,7 +11,7 @@ import BookmarkContainer from "./container/BookmarkContainer";
 
 export default function App() {
 	useLayoutEffect(() => {
-		document.title = "New Page Title";
+		document.title = "andold #bookmark #favorite";
 	}, []);
 
 	  return (
