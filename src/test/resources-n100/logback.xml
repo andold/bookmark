@@ -38,18 +38,17 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.hibernate" additivity="false" level="warn">
+	<logger name="채ㅡ" additivity="false" level="warn">
 		<appender-ref ref="console" />
-		<appender-ref ref="bookmark" />
+		<appender-ref ref="general" />
+	</logger>
+	<logger name="org" additivity="false" level="warn">
+		<appender-ref ref="console" />
+		<appender-ref ref="general" />
 	</logger>
 	<logger name="kr.andold.household" additivity="false" level="debug">
 		<appender-ref ref="console" />
 		<appender-ref ref="bookmark" />
-	</logger>
-
-	<logger name="org.springframework" additivity="false" level="warn">
-		<appender-ref ref="console" />
-		<appender-ref ref="general" />
 	</logger>
 
 	<root level="info">
