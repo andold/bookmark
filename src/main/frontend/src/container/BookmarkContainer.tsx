@@ -19,7 +19,7 @@ import { ColDef } from "ag-grid-community";
 // BookmarkContainer.tsx
 function BookmarkContainer(props: any) {
 	const [refresh, setRefresh] = useState<boolean>(false);
-	const [mode, setMode] = useState<number>(1);
+	const [mode, setMode] = useState<number>(0);
 	const [keyword, setKeyword] = useState<string>("한겨레");
 	const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
 
