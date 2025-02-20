@@ -11,7 +11,7 @@ import store from "../store/BookmarkStore";
 // view
 
 export function BookmarkViewAgGridTree(props: any) {
-	const { bookmarks, onRemove, onCopy, onUpdate } = props;
+	const { show, keyword, bookmarks, onRemove, onCopy, onUpdate } = props;
 
 	const [mapBookmark, setMapBookmark] = useState<Map<number, Bookmark>>(new Map());
 	const [rowData, setRowData] = useState<any[]>([]);
@@ -36,6 +36,24 @@ export function BookmarkViewAgGridTree(props: any) {
 		gridRef.current.api.sizeColumnsToFit();
 		gridRef.current.api.setGridOption("domLayout", "autoHeight");
 	}
+	function doesExternalFilterPass(node: any): boolean {
+		if (!node || !node.data || !node.data.parent
+				|| (!!keyword && keyword.length !== 0
+						&& ((!!node.data.title && node.data.title.includes(keyword))
+							|| (!!node.data.description && node.data.description.includes(keyword))
+							|| (!!node.data.url && node.data.url.includes(keyword))
+						)
+					)) {
+			return true;
+		}
+
+		const collapsed = store.findCollapsedParent(node.data.parent);
+		if (collapsed) {
+			return false;
+		}
+
+		return doesExternalFilterPass(node.data.parent);
+	}
 
 	useEffect(() => {
 		const map: Map<number, Bookmark> = store.makeMap(bookmarks);
@@ -43,7 +61,11 @@ export function BookmarkViewAgGridTree(props: any) {
 		setMapBookmark(map);
 		const aligned = store.traverseAndPush([], root, []);
 		setRowData(aligned);
-	}, [bookmarks]);
+	}, [keyword, bookmarks]);
+
+	if (!show) {
+		return (<></>);
+	}
 
 	return (<>
 		<AgGridReact
@@ -53,7 +75,6 @@ export function BookmarkViewAgGridTree(props: any) {
 			defaultColDef={{
 				sortable: true,
 				resizable: true,
-				suppressMenu: true,
 			}}
 			isExternalFilterPresent={() => true}
 			doesExternalFilterPass={doesExternalFilterPass}
@@ -64,18 +85,6 @@ export function BookmarkViewAgGridTree(props: any) {
 	</>);
 }
 
-function doesExternalFilterPass(node: any): boolean {
-	if (!node || !node.data || !node.data.parent) {
-		return true;
-	}
-
-	const collapsed = store.findCollapsedParent(node.data.parent);
-	if (collapsed) {
-		return false;
-	}
-
-	return doesExternalFilterPass(node.data.parent);
-}
 function calculateColumnDefs(mapBookmark: Map<number, Bookmark>, onRemove: any, onCopy: any): any {
 	const defaultColumnDefs = store.columnDefs(mapBookmark);
 	return [

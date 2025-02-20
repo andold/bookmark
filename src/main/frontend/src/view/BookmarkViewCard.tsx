@@ -9,7 +9,7 @@ import store from "../store/BookmarkStore";
 
 // BookmarkViewCard.tsx
 export function BookmarkViewCard(props: any) {
-	const { bookmarks, onClick } = props;
+	const { show, bookmarks, onClick } = props;
 	const [major, setMajor] = useState<any[]>([]);
 	useEffect(() => {
 		const map: Map<number, Bookmark> = store.makeMap(bookmarks);
@@ -22,6 +22,10 @@ export function BookmarkViewCard(props: any) {
 
 		setMajor(root.children.sort((a: any, b: any) => b.count - a.count));
 	}, [bookmarks]);
+
+	if (!show) {
+		return (<></>);
+	}
 
 	return (<>
 		<Row className="text-start mx-0" xs={1} sm={2} md={3} lg={4}>

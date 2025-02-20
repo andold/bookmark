@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Row, Col, Button, Modal, CloseButton, Accordion } from "react-bootstrap";
-import { Form } from "react-bootstrap";
+import { Form, Row, Col, Button, Dropdown, InputGroup, Modal, CloseButton, Accordion } from "react-bootstrap";
 import moment from "moment";
 import { AgGridReact } from "ag-grid-react";
 
@@ -19,50 +18,72 @@ import { ColDef } from "ag-grid-community";
 
 // BookmarkContainer.tsx
 function BookmarkContainer(props: any) {
+	const [refresh, setRefresh] = useState<boolean>(false);
+	const [mode, setMode] = useState<number>(1);
+	const [keyword, setKeyword] = useState<string>("한겨레");
 	const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
-	const modeComponent = [
-		<BookmarkViewCard
-			bookmarks={bookmarks}
-			onClick={(bookmark: Bookmark) => store.increaseCount(bookmark, () => setForm({ ...form }))}
-		/>,
-		<BookmarkViewAgGridTree
-			bookmarks={bookmarks}
-			onRemove={(bookmark: Bookmark) => store.remove(bookmark, () => setForm({ ...form }))}
-			onCopy={(bookmark: Bookmark) => store.copy(bookmark, () => setForm({ ...form }))}
-			onUpdate={(bookmark: Bookmark) => store.update(bookmark, () => setForm({ ...form }))}
-		/>,
-		<BookmarkViewAgGrid
-			bookmarks={bookmarks}
-			onRemove={(bookmark: Bookmark) => store.remove(bookmark, () => setForm({ ...form }))}
-			onCopy={(bookmark: Bookmark) => store.copy(bookmark, () => setForm({ ...form }))}
-			onUpdate={(bookmark: Bookmark) => store.update(bookmark, () => setForm({ ...form }))}
-		/>,
-	];
-	const [form, setForm] = useState({
-		viewMode: 0,
-	});
+
 	useEffect(() => {
 		store.search({}, (_: any, response: Bookmark[]) => setBookmarks(response));
-	}, [form]);
+	}, [refresh]);
+
+	function handleOnRemove(bookmark: Bookmark) {
+		store.remove(bookmark, () => setRefresh(!refresh));
+	}
+	function handleOnCopy(bookmark: Bookmark) {
+		store.copy(bookmark, () => setRefresh(!refresh));
+	}
+	function handleOnUpdate(bookmark: Bookmark) {
+		store.update(bookmark, () => setRefresh(!refresh));
+	}
+	function handleOnClickMode() {
+		setMode(mode + 1);
+	}
+	function handleOnChangeKeyword(_keyword: string) {
+		setKeyword(_keyword);
+	}
 
 	return (<>
-		{form.viewMode % modeComponent.length !== 0 && (
-			<SearchSection
-				form={form}
-				onChange={(params: any) => setForm(params)}
-			/>
-		)}
-		{modeComponent[form.viewMode % modeComponent.length]}
 		<SearchSection
-			form={form}
-			onChange={(params: any) => setForm(params)}
+			show={mode % 3 !== 0}
+			keyword={keyword}
+			onClickMode={handleOnClickMode}
+			onChangeKeyword={handleOnChangeKeyword}
+			onChange={() => setRefresh(!refresh)}
+		/>
+		<BookmarkViewCard
+			show={mode % 3 === 0}
+			bookmarks={bookmarks}
+			onClick={(bookmark: Bookmark) => store.increaseCount(bookmark, () => setRefresh(!refresh))}
+		/>
+		<BookmarkViewAgGridTree
+			show={mode % 3 === 1}
+			keyword={keyword}
+			bookmarks={bookmarks}
+			onRemove={handleOnRemove}
+			onCopy={handleOnCopy}
+			onUpdate={handleOnUpdate}
+		/>
+		<BookmarkViewAgGrid
+			show={mode % 3 === 2}
+			bookmarks={bookmarks}
+			onRemove={handleOnRemove}
+			onCopy={handleOnCopy}
+			onUpdate={handleOnUpdate}
+		/>
+		<SearchSection
+			show={true}
+			keyword={keyword}
+			onClickMode={handleOnClickMode}
+			onChangeKeyword={handleOnChangeKeyword}
+			onChange={() => setRefresh(!refresh)}
 		/>
 	</>);
 }
 export default BookmarkContainer;
 
 function BookmarkViewAgGrid(props: any) {
-	const { bookmarks, onUpdate } = props;
+	const { show, bookmarks, onUpdate } = props;
 
 	const [mapBookmark, setMapBookmark] = useState<Map<number, Bookmark>>(new Map());
 	const [clones, setClones] = useState<Bookmark[]>([]);
@@ -81,8 +102,8 @@ function BookmarkViewAgGrid(props: any) {
 		});
 	}
 	function handleOnGridReady() {
-		gridRef.current!.api.sizeColumnsToFit();
-		gridRef.current!.api.setGridOption("domLayout", "autoHeight");
+		gridRef.current?.api.sizeColumnsToFit();
+		gridRef.current?.api.setGridOption("domLayout", "autoHeight");
 	}
 
 	useEffect(() => {
@@ -92,6 +113,10 @@ function BookmarkViewAgGrid(props: any) {
 	useEffect(() => {
 		setClones(Array.from(mapBookmark.values()));
 	}, [mapBookmark]);
+
+	if (!show) {
+		return (<></>);
+	}
 
 	return (<>
 		<AgGridReact
@@ -110,26 +135,54 @@ function BookmarkViewAgGrid(props: any) {
 	</>);
 }
 function SearchSection(props: any) {
-	const { form, onChange } = props;
+	const { show, keyword, onClickMode, onChangeKeyword, onChange } = props;
+
 	const [showUploadModal, setShowUploadModal] = useState(false);
+	const refSearhKeyword = useRef<any>(null);
+
+	function handleOnKeyDownKeyword(event: any) {
+		(event.key === "Enter") && onChangeKeyword && onChangeKeyword(event.target.value);
+	}
+	function handleOnClickSubmit() {
+		refSearhKeyword.current && onChangeKeyword && onChangeKeyword(refSearhKeyword.current?.value);
+	}
+
+	if (!show) {
+		return (<></>);
+	}
 
 	return (<>
 		<Form>
 			<Row className="mx-0 py-1 bg-dark border-top border-secondary">
+				<Col xs="auto" className="ps-1 pe-1">
+					<Form.Control size="sm" type="search" className="bg-dark text-white" defaultValue={keyword}
+						ref={refSearhKeyword}
+						onKeyDown={handleOnKeyDownKeyword}
+					/>
+				</Col>
 				<Col xs="1" className="px-1 me-auto"></Col>
 				<Col xs="auto" className="mx-1">
-					<Button size="sm" variant="secondary" className="mx-1" onClick={_ => store.countHalf()}>Count ½</Button>
-					<Button size="sm" variant="secondary" className="mx-1" onClick={_ => store.aggreagateCount()}>Aggreagate Count</Button>
-					<Button size="sm" variant="secondary" className="mx-1" onClick={_ => store.download(`bookmark-${moment().format("YYYYMMDD")}.json`)}>Download</Button>
-					<Button size="sm" variant="secondary" className="mx-1" onClick={_ => setShowUploadModal(true)}>Upload</Button>
-					<Button variant="secondary" size="sm" title={form.viewMode} onClick={_ => onChange({ ...form, viewMode: form.viewMode + 1 })}>MODE</Button>
+					<InputGroup size="sm">
+						<Button size="sm" variant="secondary" onClick={handleOnClickSubmit}>Submit</Button>
+
+						<Dropdown>
+							<Dropdown.Toggle id="dropdown-basic" size="sm" variant="primary" className="ms-1">메뉴</Dropdown.Toggle>
+							<Dropdown.Menu>
+								<Dropdown.Item onClick={_ => store.countHalf()}>Count ½</Dropdown.Item>
+								<Dropdown.Item onClick={_ => store.aggreagateCount()}>Aggreagate Count</Dropdown.Item>
+								<Dropdown.Item onClick={_ => store.download(`bookmark-${moment().format("YYYYMMDD")}.json`)}>Download</Dropdown.Item>
+								<Dropdown.Item onClick={_ => setShowUploadModal(true)}>Upload</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
+						<Button size="sm" variant="secondary" className="ms-1" onClick={onClickMode}>MODE</Button>
+					</InputGroup>
 				</Col>
 			</Row>
 		</Form>
 		<UploadModal
 			show={showUploadModal}
 			onClose={() => setShowUploadModal(false)}
-			onChange={(_: any) => onChange && onChange({ ...form, reload: true, })}
+			onChange={onChange}
 		/>
 	</>);
 }
