@@ -2,11 +2,12 @@
 @REM
 @REM profile n100
 @REM
+SET PROJECT=bookmark
 SET PROFILE=n100
-SET INSTALL_SCRIPT_FILE_NAME=install-%PROFILE%.bat
+SET INSTALL_SCRIPT_FILE_NAME=install-%PROJECT%-%PROFILE%.bat
 SET DEPLOY_SCRIPT_FILE_NAME=deploy.bat
-SET SOURCE_DIR=C:\src\github\bookmark
-SET DEPLOY_DIR=C:\deploy\bookmark
+SET SOURCE_DIR=C:\src\github\%PROJECT%
+SET DEPLOY_DIR=C:\deploy\%PROJECT%
 SET APACHE_TOMCAT=tomcat10
 SET LC_ALL=ko_KR.UTF-8
 @REM
@@ -49,7 +50,7 @@ TIMEOUT 4
 @REM
 CD  %DEPLOY_DIR%\doc_base
 DEL  /F /S /Q * > nul
-jar  -xf %SOURCE_DIR%\build\libs\bookmark-0.0.1-SNAPSHOT.war
+jar  -xf %SOURCE_DIR%\build\libs\%PROJECT%-0.0.1-SNAPSHOT.war
 @REM
 @REM
 @REM build

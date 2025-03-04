@@ -1,6 +1,6 @@
 <!DOCTYPE configuration>
 <configuration debug="false" scan="true" scanPeriod="30 seconds">
-	<property name="LOG_PATH" value="C:/logs/bookmark" />
+	<property name="LOG_PATH" value="/home/andold/logs/bookmark" />
 	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
@@ -44,7 +44,7 @@
 			<maxFileSize>4MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-32.32logger{32} :%4line %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-64.64logger{64} :%4line %msg%n</Pattern>
 		</encoder>
 	</appender>
 

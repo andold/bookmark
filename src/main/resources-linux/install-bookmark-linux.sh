@@ -1,12 +1,13 @@
 #!/bin/bash
 #
 #
-PROFILE=opi0
-INSTALL_SCRIPT_FILE_NAME=install-$PROFILE.sh
+PROJECT=bookmark
+PROFILE=linux
+INSTALL_SCRIPT_FILE_NAME=install-$PROJECT-$PROFILE.sh
 DEPLOY_SCRIPT_FILE_NAME=deploy.sh
 HOME_DIR=/home/andold
-SOURCE_DIR=$HOME_DIR/src/github/bookmark
-DEPLOY_DIR=$HOME_DIR/deploy/bookmark
+SOURCE_DIR=$HOME_DIR/src/github/$PROJECT
+DEPLOY_DIR=$HOME_DIR/deploy/$PROJECT
 TOMCAT_BIN_DIR=$HOME_DIR/apps/tomcat/bin
 #
 #

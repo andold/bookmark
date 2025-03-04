@@ -51,13 +51,13 @@
 		</encoder>
 	</appender>
 
-	<logger name="kr.andold.exercise.service.ZookeeperClient" additivity="false" value="info">
+	<logger name="kr.andold.bookmark.service.ZookeeperClient" additivity="false" value="info">
 		<appender-ref ref="console" />
 		<appender-ref ref="zookeeper" />
 	</logger>
-	<logger name="kr.andold.exercise" additivity="false" value="debug">
+	<logger name="kr.andold.bookmark" additivity="false" value="debug">
 		<appender-ref ref="console" />
-		<appender-ref ref="exercise" />
+		<appender-ref ref="bookmark" />
 	</logger>
 
 	<root level="info">
