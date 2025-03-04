@@ -5,13 +5,13 @@ buildscript {
 		}
 	}
 	dependencies {
-		classpath("io.spring.gradle:dependency-management-plugin:1.1.4")
-		classpath("com.github.node-gradle:gradle-node-plugin:7.0.2")
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:3.2.2")
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:3.0.1"
 	}
 }
 
 plugins {
+	id "io.spring.dependency-management" version "1.0.11.RELEASE"
+	id "com.github.node-gradle.node" version "3.5.0"
 	id "java"
 	id "war"
 }
@@ -22,7 +22,6 @@ ext {
 
 apply plugin: "org.springframework.boot"
 apply plugin: "com.github.node-gradle.node"
-apply plugin: "io.spring.dependency-management"
 
 war.enabled = true
 
@@ -45,10 +44,9 @@ repositories {
 }
 
 dependencies {
-	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	implementation("org.apache.zookeeper:zookeeper:3.9.3")
 	implementation("org.postgresql:postgresql:42.7.4")
-
-	implementation("kr.andold:utils:0.0.4")
+	implementation("kr.andold:utils:0.0.5")
 
 	implementation("org.jsoup:jsoup:1.15.3")
 	implementation("org.hibernate:hibernate-jpamodelgen:6.1.7.Final")

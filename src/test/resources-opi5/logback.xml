@@ -21,6 +21,19 @@
 			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-64.64logger{64} :%4line %msg%n</Pattern>
 		</encoder>
 	</appender>
+	<appender name="zookeeper" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_PATH}/zookeeper.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/zookeeper.log.%i</fileNamePattern>
+			<maxIndex>9</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>8MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-64.64logger{64} :%3line %msg%n</Pattern>
+		</encoder>
+	</appender>
 	<appender name="bookmark" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<File>${LOG_PATH}/bookmark.log</File>
 		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
@@ -35,6 +48,10 @@
 		</encoder>
 	</appender>
 
+	<logger name="kr.andold.bookmark.service.ZookeeperClient" additivity="false" value="info">
+		<appender-ref ref="console" />
+		<appender-ref ref="zookeeper" />
+	</logger>
 	<logger name="kr.andold.bookmark" additivity="false" level="debug">
 		<appender-ref ref="console" />
 		<appender-ref ref="bookmark" />

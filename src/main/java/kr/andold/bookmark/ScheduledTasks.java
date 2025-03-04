@@ -10,13 +10,13 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import kr.andold.bookmark.domain.BookmarkParam;
 import kr.andold.bookmark.service.BookmarkService;
+import kr.andold.bookmark.service.ZookeeperClient;
 import kr.andold.utils.Utility;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Configuration
 @EnableScheduling
-@ConditionalOnProperty(value = "app.scheduling.enable", havingValue = "true", matchIfMissing = true)
 public class ScheduledTasks {
-	@Autowired
-	private BookmarkService service;
+	@Autowired private BookmarkService service;
+	@Autowired private ZookeeperClient zookeeperClient;
 
 	@Getter private static String dataPath;
-	@Value("${data.path:C:/tmp}")
+	@Value("${user.data.path}")
 	public void setDataPath(String dataPath) {
 		log.info("{} setDataPath({})", Utility.indentMiddle(), dataPath);
 		ScheduledTasks.dataPath = dataPath;
@@ -41,20 +40,43 @@ public class ScheduledTasks {
 		}
 	}
 
+	@Scheduled(initialDelay = 1000 * 8, fixedDelay = Long.MAX_VALUE)
+	public void once() {
+		log.info("{} once()", Utility.indentStart());
+		long started = System.currentTimeMillis();
+		
+		zookeeperClient.run();
+		
+		log.info("{} once() - {}", Utility.indentEnd(), Utility.toStringPastTimeReadable(started));
+	}
+
+	// 매분마다
+	@Scheduled(cron = "0 * * * * *")
+	public void minutely() {
+		log.trace("{} minutely()", Utility.indentStart());
+		long started = System.currentTimeMillis();
+
+		log.info("{} minutely() - {} {}", Utility.indentMiddle(), ZookeeperClient.isMaster(), ZookeeperClient.getCurrentZNodeName());
+
+		log.trace("{} minutely() - {}", Utility.indentEnd(), Utility.toStringPastTimeReadable(started));
+	}
+
 	// 매일
 	@Scheduled(cron = "0 47 0 * * *")
 	public void scheduleTaskDaily() {
 		log.info("{} scheduleTaskDaily()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 		
-		String yyyymmdd = LocalDate.now().minusDays(1).format(DateTimeFormatter.BASIC_ISO_DATE);
+		if (ZookeeperClient.isMaster()) {
+			String yyyymmdd = LocalDate.now().minusDays(1).format(DateTimeFormatter.BASIC_ISO_DATE);
 
-		BookmarkParam param = service.download();
-		String text = Utility.toStringJsonPretty(param);
-		String filenameCurrent = String.format("%s/bookmark.json", dataPath);
-		String filenameYesterday = String.format("%s/bookmark-%s.json", dataPath, yyyymmdd);
-		rename(filenameCurrent, filenameYesterday);
-		Utility.write(filenameCurrent, text);
+			BookmarkParam param = service.download();
+			String text = Utility.toStringJsonPretty(param);
+			String filenameCurrent = String.format("%s/bookmark.json", dataPath);
+			String filenameYesterday = String.format("%s/bookmark-%s.json", dataPath, yyyymmdd);
+			rename(filenameCurrent, filenameYesterday);
+			Utility.write(filenameCurrent, text);
+		}
 
 		log.info("{} scheduleTaskDaily() - {}", Utility.indentEnd(), Utility.toStringPastTimeReadable(started));
 	}
