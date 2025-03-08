@@ -15,7 +15,7 @@ public class ScheduledTasksTest {
 	@Test
 	public void testScheduleTaskDaily() {
 		log.info("{} testScheduleTaskDaily() -----------------------------------------------------------", Utility.indentMiddle());
-		service.scheduleTaskDaily();
+		service.daily();
 	}
 
 }
