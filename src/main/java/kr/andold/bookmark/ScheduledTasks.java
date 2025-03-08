@@ -61,10 +61,23 @@ public class ScheduledTasks {
 		log.trace("{} minutely() - {}", Utility.indentEnd(), Utility.toStringPastTimeReadable(started));
 	}
 
+	// 매시간
+	@Scheduled(cron = "0 56 * * * *")
+	public void hourly() {
+		log.trace("{} hourly()", Utility.indentStart());
+		long started = System.currentTimeMillis();
+
+		if (ZookeeperClient.isMaster()) {
+			service.aggreagateCount();
+		}
+
+		log.trace("{} hourly() - {}", Utility.indentEnd(), Utility.toStringPastTimeReadable(started));
+	}
+
 	// 매일
 	@Scheduled(cron = "0 47 0 * * *")
-	public void scheduleTaskDaily() {
-		log.info("{} scheduleTaskDaily()", Utility.indentStart());
+	public void daily() {
+		log.info("{} daily()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 		
 		if (ZookeeperClient.isMaster()) {
@@ -78,7 +91,7 @@ public class ScheduledTasks {
 			Utility.write(filenameCurrent, text);
 		}
 
-		log.info("{} scheduleTaskDaily() - {}", Utility.indentEnd(), Utility.toStringPastTimeReadable(started));
+		log.info("{} daily() - {}", Utility.indentEnd(), Utility.toStringPastTimeReadable(started));
 	}
 
 	private void rename(String before, String after) {
