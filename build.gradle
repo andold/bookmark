@@ -5,7 +5,7 @@ buildscript {
 		}
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:3.0.1"
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:3.2.2")
 	}
 }
 
@@ -17,7 +17,7 @@ plugins {
 }
 
 ext {
-	lombokVersion = "1.18.24"
+	lombokVersion = "1.18.30"
 }
 
 apply plugin: "org.springframework.boot"
@@ -28,9 +28,8 @@ war.enabled = true
 group = "kr.andold.bookmark"
 version = "0.0.1-SNAPSHOT"
 
-//	compatible gradle 7.5
-sourceCompatibility = 18
-targetCompatibility = 18
+sourceCompatibility = 21
+targetCompatibility = 21
 
 repositories {
 	mavenCentral()
@@ -50,7 +49,7 @@ dependencies {
 
 	implementation("org.jsoup:jsoup:1.15.3")
 	implementation("org.hibernate:hibernate-jpamodelgen:6.1.7.Final")
-	implementation("org.springframework.boot:spring-boot:3.2.5")
+	implementation("org.springframework.boot:spring-boot:3.2.4")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -119,7 +118,7 @@ task copyWebApp(type: Copy) {
 }
 
 node {
-	version = "19.1.0"
+	version = "20.17.0"
 	npmVersion = "9.1.2"
 	download = true
 	nodeProjectDir = file("$webappDir")

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>330</y>
+      <w>610</w>
+      <h>290</h>
+    </coordinates>
+    <panel_attributes>kr.andold.bookmark.controller::ApiBookmarkController
+--
+-service: BookmarkService
+--
++search(@RequestBody BookmarkParameter parameter): List&lt;Bookmark&gt;
++create(@RequestBody Bookmark bookmark): Bookmark
++batch(@RequestBody BookmarkDifferResult param): int
++read(@PathVariable Integer id): Bookmark
++update(@PathVariable Integer id, @RequestBody BookmarkParameter bookmark): Bookmark
++updateCountIncrease(@PathVariable Integer id): Bookmark
++delete(@PathVariable Integer id): boolean
++sample(): Bookmark
++download(HttpServletResponse httpServletResponse): String
++upload(@RequestPart(value = "file") MultipartFile file): BookmarkDifferResult
++aggreagateCount(): long
++decreaseCountHalf(): long
++deduplicate(): BookmarkDifferResult
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>350</x>
+      <y>1590</y>
+      <w>750</w>
+      <h>330</h>
+    </coordinates>
+    <panel_attributes>kr.andold.bookmark.domain::BookmarkParam
+--
+-DELEMETER_KEY = "⇨": String
+-title: String
+-url: String
+-description: String
+-count: Integer
+-created: Date
+-updated: Date
+-children: List&lt;BookmarkParam&gt;
+--
++of(Bookmark bookmark, Map&lt;Integer, Bookmark&gt; mapBookmark): BookmarkParam
++of(String text): BookmarkParam
++of(List&lt;Bookmark&gt; bookmarks): BookmarkParam
++makeMapBookmarks(BookmarkParam root): Map&lt;String, BookmarkParam&gt;
+-put(Map&lt;String, BookmarkParam&gt; map, String prefix, BookmarkParam item): void
++key(Bookmark bookmark, Map&lt;Integer, Bookmark&gt; mapBookmark): String
++isSame(Bookmark bookmark, BookmarkParam bookmarkParam, Map&lt;Integer, Bookmark&gt; mapBookmark): boolean
++overwrite(Bookmark before, BookmarkParam after): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>1590</y>
+      <w>330</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>kr.andold.bookmark.domain::BookmarkParameter
+--
+-force: Boolean
+-expand: Boolean
+-keyword: String
+--
++toString(): String
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>1720</y>
+      <w>250</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>kr.andold.bookmark.entity::Bookmark
+--
+-id: Integer
+-title: String
+-url: String
+-description: String
+-pid: Integer
+-count: Integer
+-created: Date
+-updated: Date
+-status: Integer
+--
++getJson(): String
++of(String string): Bookmark
++sample(): Bookmark
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>1440</y>
+      <w>480</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+kr.andold.bookmark.repository::BookmarkRepository
+--
+--
+~findByOrderByPidAscIdAsc(): List&lt;Bookmark&gt;
+~findOneByPid(long pid): Bookmark
+~findByIdOrUrl(Integer id, String trim): List&lt;Bookmark&gt;
+~search(@Param("param") BookmarkParameter param): List&lt;Bookmark&gt;
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>630</y>
+      <w>1380</w>
+      <h>800</h>
+    </coordinates>
+    <panel_attributes>kr.andold.bookmark.service::BookmarkService
+--
+-ROOT_ID = 53755: Integer
+-ROOT_DEFAULT = Bookmark.builder().id(ROOT_ID).title("잡다한 인연들").url("http://andold.iptime.org/").description("잡다한 인연들").pid(ROOT_ID).count(0).created(new Date()).updated(new Date()).build(): Bookmark
+-repository: BookmarkRepository
+--
++list(): List&lt;Bookmark&gt;
++create(Bookmark bookmark): Bookmark
++create(List&lt;Bookmark&gt; list): List&lt;Bookmark&gt;
++read(Integer id): Bookmark
++root(): Bookmark
+-root(List&lt;Bookmark&gt; bookmarks): Bookmark
++root(Map&lt;Integer, Bookmark&gt; map): Bookmark
++isRoot(Integer id, Integer pid): boolean
++rootDefault(): Bookmark
+-children(Bookmark bookmark, Map&lt;Integer, Bookmark&gt; map): List&lt;Bookmark&gt;
++differByContent(List&lt;Bookmark&gt; listAfter, List&lt;Bookmark&gt; listCreate, List&lt;Bookmark&gt; listUpdate, List&lt;Bookmark&gt; listDelete): int
++synchronize(List&lt;Bookmark&gt; listAfter, List&lt;Bookmark&gt; listCreate, List&lt;Bookmark&gt; listUpdate, List&lt;Bookmark&gt; listDelete): int
+-synchronize(Map&lt;Integer, Bookmark&gt; mapBefore, Map&lt;Integer, Bookmark&gt; mapAfter, List&lt;Bookmark&gt; listCreate, List&lt;Bookmark&gt; listDelete, List&lt;Bookmark&gt; listUpdate): int
+-differ(Map&lt;Integer, Bookmark&gt; mapBefore, Map&lt;Integer, Bookmark&gt; mapAfter, List&lt;Bookmark&gt; listCreate, List&lt;Bookmark&gt; listDelete, List&lt;Bookmark&gt; listUpdate): int
+-merge(Bookmark left, Bookmark right, int degree): Bookmark
+-equivalent(Bookmark left, Bookmark right): boolean
++makeMap(List&lt;Bookmark&gt; list): Map&lt;Integer, Bookmark&gt;
+-makeMapByKey(List&lt;Bookmark&gt; bookmarks, Map&lt;Integer, Bookmark&gt; mapBookmark): Map&lt;String, Bookmark&gt;
++update(Integer id, Bookmark bookmark, Boolean force): Bookmark
++updateCountIncrease(Integer id): Bookmark
+-copyNotNullExcludeId(Bookmark base, Bookmark bookmark): boolean
+-update(Bookmark bookmark): Bookmark
++update(List&lt;Bookmark&gt; list, long timestamp): void
++delete(Integer id): boolean
++delete(List&lt;Bookmark&gt; list): void
+-delete(Bookmark bookmark): void
++search(BookmarkParameter parameter): List&lt;Bookmark&gt;
++aggreagateCount(): Integer
+-aggreagateCount(Bookmark bookmark, Map&lt;Integer, Bookmark&gt; map): Integer
++decreaseCountHalf(): long
+-decreaseCountHalf(Bookmark bookmark, Map&lt;Integer, Bookmark&gt; map): Integer
++download(): BookmarkParam
++readFileFromText(MultipartFile multipartFile): String
++upload(MultipartFile file): BookmarkDifferResult
+-differ(BookmarkParam afterBookmarkParamRoot): BookmarkDifferResult
++batch(BookmarkDifferResult param): int
+-createBookmarkResultCreate(List&lt;BookmarkResultCreate&gt; creates): List&lt;?&gt;
+-update(List&lt;Bookmark&gt; updates, Date date): List&lt;?&gt;
+-fillDefault(Bookmark bookmark): void
+-remove(List&lt;Bookmark&gt; removes): List&lt;?&gt;
++deduplicate(): BookmarkDifferResult
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1400</x>
+      <y>330</y>
+      <w>350</w>
+      <h>230</h>
+    </coordinates>
+    <panel_attributes>kr.andold.bookmark.service::ZookeeperClient
+--
+-isMaster = false: boolean
+-currentZNodeName: String
+-zookeeper: ZooKeeper
+-userZookeeperConnectString: String
+-userZookeeperZnodeElectPath: String
+--
++setUserZookeeperConnectString(String value): void
++setUserZookeeperZnodeElectPath(String value): void
++run(): void
++process(WatchedEvent event): void
+-isMaster(List&lt;String&gt; children): boolean
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>110</y>
+      <w>270</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>kr.andold.bookmark::ScheduledTasks
+--
+-service: BookmarkService
+-zookeeperClient: ZookeeperClient
+-dataPath: String
+--
++setDataPath(String dataPath): void
++once(): void
++minutely(): void
++hourly(): void
++daily(): void
+-rename(String before, String after): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>220</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>kr.andold.bookmark::Application
+--
+--
++main(String[] args): void
++started(): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
