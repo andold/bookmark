@@ -45,7 +45,7 @@ repositories {
 dependencies {
 	implementation("org.apache.zookeeper:zookeeper:3.9.3")
 	implementation("org.postgresql:postgresql:42.7.4")
-	implementation("kr.andold:utils:0.0.5")
+	implementation("kr.andold:utils:0.0.7-SNAPSHOT")
 
 	implementation("org.jsoup:jsoup:1.15.3")
 	implementation("org.hibernate:hibernate-jpamodelgen:6.1.7.Final")

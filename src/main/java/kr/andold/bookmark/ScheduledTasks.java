@@ -28,11 +28,11 @@ public class ScheduledTasks {
 	@Autowired private BookmarkService service;
 	@Autowired private ZookeeperClient zookeeperClient;
 
-	@Getter private static String dataPath;
+	@Getter private static String userDataPath;
 	@Value("${user.data.path}")
-	public void setDataPath(String dataPath) {
-		log.info("{} setDataPath({})", Utility.indentMiddle(), dataPath);
-		ScheduledTasks.dataPath = dataPath;
+	public void setUserDataPath(String dataPath) {
+		log.info("{} setUserDataPath({})", Utility.indentMiddle(), dataPath);
+		ScheduledTasks.userDataPath = dataPath;
 		File directory = new File(dataPath);
 		if (!directory.exists()) {
 			log.info("{} NOT EXIST PATH setDataPath({})", Utility.indentMiddle(), dataPath);
@@ -56,7 +56,7 @@ public class ScheduledTasks {
 		log.trace("{} minutely()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 
-		log.info("{} minutely() - {} {}", Utility.indentMiddle(), ZookeeperClient.isMaster(), ZookeeperClient.getCurrentZNodeName());
+		log.info("{} minutely() - {}", Utility.indentMiddle(), zookeeperClient.status(false));
 
 		log.trace("{} minutely() - {}", Utility.indentEnd(), Utility.toStringPastTimeReadable(started));
 	}
@@ -67,7 +67,7 @@ public class ScheduledTasks {
 		log.trace("{} hourly()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 
-		if (ZookeeperClient.isMaster()) {
+		if (zookeeperClient.isMaster()) {
 			service.aggreagateCount();
 		}
 
@@ -80,13 +80,13 @@ public class ScheduledTasks {
 		log.info("{} daily()", Utility.indentStart());
 		long started = System.currentTimeMillis();
 		
-		if (ZookeeperClient.isMaster()) {
+		if (zookeeperClient.isMaster()) {
 			String yyyymmdd = LocalDate.now().minusDays(1).format(DateTimeFormatter.BASIC_ISO_DATE);
 
 			BookmarkParam param = service.download();
 			String text = Utility.toStringJsonPretty(param);
-			String filenameCurrent = String.format("%s/bookmark.json", dataPath);
-			String filenameYesterday = String.format("%s/bookmark-%s.json", dataPath, yyyymmdd);
+			String filenameCurrent = String.format("%s/bookmark.json", userDataPath);
+			String filenameYesterday = String.format("%s/bookmark-%s.json", userDataPath, yyyymmdd);
 			rename(filenameCurrent, filenameYesterday);
 			Utility.write(filenameCurrent, text);
 		}

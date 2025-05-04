@@ -5,7 +5,7 @@
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<Pattern>%d{HH:mm:ss} [%-5level] %-32.32logger{32} :%4line %msg%n</Pattern>
+			<Pattern>%d{HH:mm:ss} [%-5level] %-40.40logger{40} :%4line %msg%n</Pattern>
 		</encoder>
 	</appender>
 	<appender name="general" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -18,7 +18,7 @@
 			<maxFileSize>4MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-64.64logger{64} :%4line %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-40.40logger{40} :%4line %msg%n</Pattern>
 		</encoder>
 	</appender>
 	<appender name="zookeeper" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -31,7 +31,7 @@
 			<maxFileSize>8MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-64.64logger{64} :%3line %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-40.40logger{40} :%3line %msg%n</Pattern>
 		</encoder>
 	</appender>
 	<appender name="bookmark" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -44,11 +44,11 @@
 			<maxFileSize>4MB</maxFileSize>
 		</triggeringPolicy>
 		<encoder>
-			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-64.64logger{64} :%4line %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] %-40.40logger{40} :%4line %msg%n</Pattern>
 		</encoder>
 	</appender>
 
-	<logger name="kr.andold.bookmark.service.ZookeeperClient" additivity="false" value="info">
+	<logger name="kr.andold.utils.ZookeeperClient" additivity="false" value="debug">
 		<appender-ref ref="console" />
 		<appender-ref ref="zookeeper" />
 	</logger>
